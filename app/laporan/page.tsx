@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Swal from "sweetalert2";
 import { FaSearch } from "react-icons/fa";
 import Delete from "./action/delete";
@@ -64,9 +64,28 @@ const Laporan = () => {
     loadTotalDenda(); // Panggil API denda
   }, []);
 
+  // Menggunakan useCallback untuk memoize filterLaporan
+  const filterLaporan = useCallback(() => {
+    let filtered = laporan;
+
+    if (statusFilter === "dipinjam") {
+      filtered = filtered.filter((item) => item.status === "dipinjam");
+    } else if (statusFilter === "selesai") {
+      filtered = filtered.filter((item) => item.status === "selesai");
+    }
+
+    if (searchTerm) {
+      filtered = filtered.filter((item) =>
+        item.pengunjungTb.nama.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    setFilteredLaporan(filtered);
+  }, [laporan, searchTerm, statusFilter]); // Tambahkan dependensi di sini
+
   useEffect(() => {
     filterLaporan();
-  }, [searchTerm, statusFilter, laporan]);
+  }, [filterLaporan]); // Menggunakan filterLaporan sebagai dependensi
 
   // Fungsi untuk mengambil data laporan
   const loadLaporan = async () => {
@@ -86,25 +105,6 @@ const Laporan = () => {
     } catch (error) {
       console.error("Error loading total denda:", error);
     }
-  };
-
-  // Fungsi untuk memfilter laporan berdasarkan status dan pencarian
-  const filterLaporan = () => {
-    let filtered = laporan;
-
-    if (statusFilter === "dipinjam") {
-      filtered = filtered.filter((item) => item.status === "dipinjam");
-    } else if (statusFilter === "selesai") {
-      filtered = filtered.filter((item) => item.status === "selesai");
-    }
-
-    if (searchTerm) {
-      filtered = filtered.filter((item) =>
-        item.pengunjungTb.nama.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    setFilteredLaporan(filtered);
   };
 
   return (
@@ -183,7 +183,6 @@ const Laporan = () => {
                     </div>
                   </td>
                   <td>{item.denda || dendaKeterlambatan}</td>{" "}
-                  {/* Tetap tampilkan denda */}
                   <td
                     style={{
                       display: "flex",

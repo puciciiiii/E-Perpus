@@ -83,7 +83,7 @@ export async function POST(request: Request) {
           tanggalPengembalian,
           kode: 0,
           buku: bukuExists.judul,
-          bukuId: Number(bukuId),
+          bukuId: bukuId.toString(), // Ubah ke string di sini
           memberId: pengunjungId,
           anggotaId,
           status,

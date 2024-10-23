@@ -3,7 +3,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import DataTable from "react-data-table-component";
 
-const pengunjung = () => {
+const Pengunjung = () => {
+  // Ubah nama fungsi menjadi 'Pengunjung'
   const [datapengunjung, setDatapengunjung] = useState([]);
   const [selectdivisi, setSelectdivisi] = useState([]);
   const [filterText, setFilterText] = React.useState("");
@@ -16,8 +17,8 @@ const pengunjung = () => {
 
   const reload = async () => {
     try {
-      const xxx = await axios.get(`/api/pengunjung`);
-      const result = await xxx.data;
+      const response = await axios.get(`/api/pengunjung`);
+      const result = await response.data;
       console.log("data pengunjung", result);
       setDatapengunjung(result);
     } catch (error) {
@@ -51,19 +52,19 @@ const pengunjung = () => {
       width: "150px",
     },
     {
-      name: "alamat",
+      name: "Alamat",
       selector: (row: any) => row.alamat,
       sortable: true,
       width: "150px",
     },
     {
-      name: "hp",
+      name: "HP",
       selector: (row: any) => row.hp,
       sortable: true,
       width: "150px",
     },
     {
-      name: "email",
+      name: "Email",
       selector: (row: any) => row.email,
       sortable: true,
       width: "150px",
@@ -90,7 +91,7 @@ const pengunjung = () => {
           <div className="row mb-3">
             <div className="col-md-9"></div>
             <div className="col-md-3">
-              <div className="input-group mb-3  input-success">
+              <div className="input-group mb-3 input-success">
                 <span className="input-group-text border-0">
                   <i className="mdi mdi-magnify"></i>
                 </span>
@@ -132,4 +133,4 @@ const pengunjung = () => {
   );
 };
 
-export default pengunjung;
+export default Pengunjung; // Ubah ekspor menjadi 'Pengunjung'

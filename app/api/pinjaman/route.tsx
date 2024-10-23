@@ -48,9 +48,10 @@ export async function POST(request: Request) {
 
     const bukuJudul = [];
 
-    for (const bukuId of bukuIds) {
+    for (const bukuIdValue of bukuIds) {
+      const bukuId = Number(bukuIdValue); // Pastikan bukuId adalah angka
       const bukuExists = await prisma.bukuTb.findUnique({
-        where: { id: Number(bukuId) },
+        where: { id: bukuId },
         select: { judul: true, stok: true },
       });
 
@@ -71,7 +72,7 @@ export async function POST(request: Request) {
       bukuJudul.push(bukuExists.judul);
 
       await prisma.bukuTb.update({
-        where: { id: Number(bukuId) },
+        where: { id: bukuId },
         data: {
           stok: { decrement: 1 },
         },
@@ -83,7 +84,7 @@ export async function POST(request: Request) {
           tanggalPengembalian,
           kode: 0,
           buku: bukuExists.judul,
-          bukuId: Number(bukuId),
+          bukuId: String(bukuId), // Konversi bukuId ke string jika perlu
           memberId: pengunjungId,
           anggotaId,
           status,

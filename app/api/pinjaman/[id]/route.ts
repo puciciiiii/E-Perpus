@@ -30,8 +30,9 @@ export async function DELETE(
       where: { id },
     });
 
+    // Akses id buku dari relasi buku secara langsung
     await prisma.bukuTb.update({
-      where: { id: existingLoan.bukuTb[0].id }, // Akses id buku dari relasi buku
+      where: { id: existingLoan.bukuTb.id }, // Akses id buku langsung
       data: {
         stok: {
           increment: 1, // Tambah stok buku
@@ -105,7 +106,7 @@ export const PATCH = async (
     // Jika status peminjaman berubah menjadi "selesai dikembalikan", tambahkan stok buku
     if (updatedStatus === "selesai dikembalikan") {
       await prisma.bukuTb.update({
-        where: { id: existingLoan.bukuTb[0].id },
+        where: { id: existingLoan.bukuTb.id }, // Akses id buku langsung
         data: {
           stok: {
             increment: 1, // Tambah stok buku

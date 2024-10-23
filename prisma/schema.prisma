@@ -96,6 +96,7 @@ model pinjamanTb {
   tanggalPengembalian DateTime?
   kode                Int
   bukuId              String
+  buku                String   // Tambahkan field ini untuk menyimpan judul buku
   memberId           Int
   anggotaId          Int
   status             String?  // Menyimpan status peminjaman
@@ -107,6 +108,7 @@ model pinjamanTb {
   daftaranggotaTb   daftaranggotaTb @relation(fields: [anggotaId], references: [id], onDelete: Cascade)
   bukuTb bukuTb[] // Mencatat relasi dengan buku
 }
+
 
 model pengunjungTb {
   id        Int      @id @default(autoincrement())
