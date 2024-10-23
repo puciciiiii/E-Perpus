@@ -1,0 +1,122 @@
+// Prisma schema file
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model bukuTb {
+  id          Int          @id @default(autoincrement())
+  kategoriId  Int
+  kodeBuku    String
+  stok        Int 
+  judul       String
+  sinopsis    String
+  namaPenulis String
+  tahunTerbit String
+  rakId       Int
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  isAvailable Boolean       @default(true) // Menandakan ketersediaan buku
+
+  kategoriTb  kategoriTb    @relation(fields: [kategoriId], references: [id], onDelete: Cascade)
+  rakTb       rakTb         @relation(fields: [rakId], references: [id], onDelete: Cascade)
+  laporanTb   laporanTb[]
+  pinjamanTb  pinjamanTb[]
+}
+
+model kategoriTb {
+  id        Int      @id @default(autoincrement())
+  nama      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bukuTb bukuTb[]
+}
+
+model lemariTb {
+  id        Int      @id @default(autoincrement())
+  nama      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  rakTb rakTb[]
+}
+
+model rakTb {
+  id        Int      @id @default(autoincrement())
+  nama      String
+  lemariId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  bukuTb   bukuTb[]
+  lemariTb lemariTb @relation(fields: [lemariId], references: [id], onDelete: Cascade)
+}
+
+model daftaranggotaTb {
+  id            Int      @id @default(autoincrement())
+  nama          String
+  alamat        String
+  email         String   @unique // Menambahkan constraint unik pada email
+  hp            String
+  tanggalDaftar DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  pinjamanTb pinjamanTb[]
+  laporanTb laporanTb[]
+}
+
+model laporanTb {
+  id                  Int       @id @default(autoincrement())
+  pengunjungId        Int
+  anggotaId           Int
+  bukuId              Int 
+  tanggalPinjaman     DateTime
+  tanggalPengembalian DateTime?
+  tanggalPengembalianSebenarnya DateTime?
+  qty                Int
+  status              String    // Menyimpan status peminjaman
+  denda               Int    // Menyimpan denda jika ada
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  daftaranggotaTb daftaranggotaTb @relation(fields: [anggotaId], references: [id], onDelete: Cascade)
+  pengunjungTb    pengunjungTb @relation(fields: [pengunjungId], references: [id], onDelete: Cascade)
+  bukuTb    bukuTb @relation(fields: [bukuId], references: [id], onDelete: Cascade)
+}
+
+model pinjamanTb {
+  id                  Int      @id @default(autoincrement())
+  tanggalPinjaman     DateTime
+  tanggalPengembalian DateTime?
+  kode                Int
+  bukuId              String
+  memberId           Int
+  anggotaId          Int
+  status             String?  // Menyimpan status peminjaman
+  denda              Float?   @default(0)  // Menyimpan denda jika ada
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  memberTb          pengunjungTb @relation(fields: [memberId], references: [id], onDelete: Cascade)
+  daftaranggotaTb   daftaranggotaTb @relation(fields: [anggotaId], references: [id], onDelete: Cascade)
+  bukuTb bukuTb[] // Mencatat relasi dengan buku
+}
+
+model pengunjungTb {
+  id        Int      @id @default(autoincrement())
+  nama      String
+  alamat    String
+  hp        String
+  email     String   @unique // Menambahkan constraint unik pada email
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  pinjamanTb pinjamanTb[]
+  laporanTb laporanTb[]
+}
